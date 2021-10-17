@@ -1,13 +1,13 @@
 package com.bcp.postulacion.tipoCambioService.rest;
 
 import com.bcp.postulacion.tipoCambioService.rest.dto.CambioDto;
+import com.bcp.postulacion.tipoCambioService.rest.dto.TipoCambioDto;
 import com.bcp.postulacion.tipoCambioService.service.ICambioService;
+import com.bcp.postulacion.tipoCambioService.service.ITipoCambioService;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -16,14 +16,26 @@ import java.math.BigDecimal;
 public class TipoCambioController {
 
     @Autowired
-    private ICambioService service;
+    private ITipoCambioService service;
 
-    @GetMapping("/{monto}/{origen}/a/{destino}")
-    public Maybe<CambioDto> getMontoCambiado(
+    @GetMapping()
+    public Observable<TipoCambioDto> getList() {
+        return service.listarTodosTiposCambio();
+    }
+
+    @GetMapping("/{origen}/a/{destino}")
+    public Maybe<TipoCambioDto> getItem(
             @PathVariable("origen") String origen,
-            @PathVariable("destino") String destino,
-            @PathVariable("monto") BigDecimal monto) {
-        return service.getCambio(origen, destino, monto);
+            @PathVariable("destino") String destino) {
+        return service.obtenerItem(origen, destino);
+    }
+
+    @PostMapping()
+    public Maybe<TipoCambioDto> guardar(@RequestBody(required = true) TipoCambioDto tipoCambioDto) {
+        return service.guardar(
+                tipoCambioDto.getMonedaOrigen(),
+                tipoCambioDto.getMonedaDestino(),
+                tipoCambioDto.getTipoCambio());
     }
 
 }

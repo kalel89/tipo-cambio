@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 public interface ITipoCambioService {
     Observable<TipoCambioDto> listarTodosTiposCambio();
+    Maybe<TipoCambioDto> obtenerItem(String origen, String destino);
     Maybe<TipoCambioDto> guardar(String origen, String destino, BigDecimal tipoCambio);
     Maybe<TipoCambioDto> eliminar(String origen, String destino);
 }
