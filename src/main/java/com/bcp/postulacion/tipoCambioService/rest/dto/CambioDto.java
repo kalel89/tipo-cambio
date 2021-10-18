@@ -9,8 +9,9 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 @Builder
 public class CambioDto {
+    private BigDecimal monto;
+    private BigDecimal montoConTipoCambio;
     private String monedaOrigen;
     private String monedaDestino;
     private BigDecimal tipoCambio;
-    private BigDecimal monto;
 }

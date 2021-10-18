@@ -24,7 +24,7 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
     @Autowired
     private TipoCambioDao tipoCambioDao;
 
-    private final MathContext mc = new MathContext(3);
+    private final MathContext mc = new MathContext(34);
 
     @Override
     public Observable<TipoCambioDto> listarTodosTiposCambio() {
@@ -57,13 +57,18 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
         pair.getKey().setTipoCambio(
                 pair.getValue()
                         ? pair.getKey().getTipoCambio()
-                        : BigDecimal.ONE.divide(pair.getKey().getTipoCambio(), mc));
+                        : BigDecimal.ONE.divide(pair.getKey().getTipoCambio(), mc).setScale(3));
         return pair.getKey();
     }
 
     @Override
     public Maybe<TipoCambioDto> eliminar(String origen, String destino) {
-        return null;
+        return obtenerItemById(origen, destino)
+                .map(x -> {
+                    tipoCambioDao.delete(x.getKey());
+                    return  x.getKey();
+                })
+                .map(this::assemblerToTipoCambioDto);
     }
 
     private Maybe<Pair<TipoCambio, Boolean>> obtenerItemById(String origen, String destino) {

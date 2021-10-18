@@ -18,7 +18,9 @@ public class CambioServiceImpl implements ICambioService {
 
     @Autowired
     private TipoCambioDao tipoCambioDao;
-    private final MathContext mc = new MathContext(3);
+
+    private final MathContext mc = new MathContext(34);
+
     @Override
     public Maybe<CambioDto> getCambio(String origen, String destino, BigDecimal monto) {
         return Maybe.just(
@@ -39,19 +41,23 @@ public class CambioServiceImpl implements ICambioService {
 
     private CambioDto multiplyTipoCambio(TipoCambio t, BigDecimal monto) {
         return CambioDto.builder()
+                .monto(monto)
                 .monedaOrigen(t.getMonedaOrigen())
                 .monedaDestino(t.getMonedaDestino())
                 .tipoCambio(t.getTipoCambio())
-                .monto(t.getTipoCambio().multiply(monto, mc)).build();
+                .montoConTipoCambio(t.getTipoCambio()
+                        .multiply(monto, mc).setScale(3))
+                .build();
     }
 
     private CambioDto divideTipoCambio(TipoCambio t, BigDecimal monto) {
         return CambioDto.builder()
+                .monto(monto)
                 .monedaOrigen(t.getMonedaOrigen())
                 .monedaDestino(t.getMonedaDestino())
                 .tipoCambio(t.getTipoCambio())
-                .monto(BigDecimal.ONE.divide(t.getTipoCambio(), mc)
-                        .multiply(monto, mc))
+                .montoConTipoCambio(BigDecimal.ONE.divide(t.getTipoCambio(), mc)
+                        .multiply(monto, mc).setScale(3))
                 .build();
     }
 

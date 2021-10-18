@@ -38,4 +38,11 @@ public class TipoCambioController {
                 tipoCambioDto.getTipoCambio());
     }
 
+    @DeleteMapping()
+    public Maybe<TipoCambioDto> eliminar(@RequestBody(required = true) TipoCambioDto tipoCambioDto) {
+        return service.eliminar(
+                tipoCambioDto.getMonedaOrigen(),
+                tipoCambioDto.getMonedaDestino());
+    }
+
 }
