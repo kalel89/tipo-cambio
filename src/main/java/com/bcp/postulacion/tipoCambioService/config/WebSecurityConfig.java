@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService jwtUserDetailsService;
 
     @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private JwtTokenValidateFilter jwtTokenValidateFilter;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .exceptionHandling()
                     .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                    .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                    .addFilterBefore(jwtTokenValidateFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         httpSecurity.headers().frameOptions().disable();

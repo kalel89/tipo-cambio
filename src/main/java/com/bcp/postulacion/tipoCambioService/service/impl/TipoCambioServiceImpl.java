@@ -3,13 +3,11 @@ package com.bcp.postulacion.tipoCambioService.service.impl;
 import com.bcp.postulacion.tipoCambioService.dao.TipoCambioDao;
 import com.bcp.postulacion.tipoCambioService.model.TipoCambio;
 import com.bcp.postulacion.tipoCambioService.model.TipoCambioId;
-import com.bcp.postulacion.tipoCambioService.rest.dto.CambioDto;
 import com.bcp.postulacion.tipoCambioService.rest.dto.TipoCambioDto;
-import com.bcp.postulacion.tipoCambioService.service.ICambioService;
 import com.bcp.postulacion.tipoCambioService.service.ITipoCambioService;
+import com.bcp.postulacion.tipoCambioService.utils.MyPair;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +33,7 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
     @Override
     public Maybe<TipoCambioDto> obtenerItem(String origen, String destino) {
         return obtenerItemById(origen, destino)
-                .map(Pair::getKey)
+                .map(MyPair::getKey)
                 .map(this::assemblerToTipoCambioDto)
                 .switchIfEmpty(Maybe.error(new Exception("Recurso no encontrado")));
     }
@@ -54,7 +52,7 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
                 .map(this::assemblerToTipoCambioDto);
     }
 
-    private TipoCambio adaptarTipoCambioPorOrigenDeMoneda(Pair<TipoCambio, Boolean> pair) {
+    private TipoCambio adaptarTipoCambioPorOrigenDeMoneda(MyPair<TipoCambio, Boolean> pair) {
         pair.getKey().setTipoCambio(
                 pair.getValue()
                         ? pair.getKey().getTipoCambio()
@@ -72,18 +70,18 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
                 .map(this::assemblerToTipoCambioDto);
     }
 
-    private Maybe<Pair<TipoCambio, Boolean>> obtenerItemById(String origen, String destino) {
+    private Maybe<MyPair<TipoCambio, Boolean>> obtenerItemById(String origen, String destino) {
         return Maybe.just(
                 tipoCambioDao.findById(new TipoCambioId(origen, destino)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(x -> new Pair<TipoCambio, Boolean>(x, Boolean.TRUE))
+                .map(x -> new MyPair<TipoCambio, Boolean>(x, Boolean.TRUE))
                 .switchIfEmpty(
                         Maybe.just(
                                 tipoCambioDao.findById(new TipoCambioId(destino, origen)))
                                 .filter(Optional::isPresent)
                                 .map(Optional::get)
-                                .map(x -> new Pair<TipoCambio, Boolean>(x, Boolean.FALSE))
+                                .map(x -> new MyPair<TipoCambio, Boolean>(x, Boolean.FALSE))
                 );
     }
 

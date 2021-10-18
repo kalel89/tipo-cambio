@@ -8,8 +8,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bcp.postulacion.tipoCambioService.utils.MyPair;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,10 +21,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.bcp.postulacion.tipoCambioService.service.impl.JwtUserDetailsService;
 
-import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtTokenValidateFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
@@ -38,9 +38,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             Optional.ofNullable(request.getHeader("Authorization"))
                     .filter(x -> x.startsWith("Bearer "))
                     .map(x -> x.substring(7))
-                    .map(token -> new Pair<String, String>(jwtTokenUtil.getUsernameFromToken(token), token))
+                    .map(token -> new MyPair<String, String>(jwtTokenUtil.getUsernameFromToken(token), token))
                     .filter(x -> SecurityContextHolder.getContext().getAuthentication() == null)
-                    .map(x -> new Pair<String, UserDetails>(x.getValue(), this.jwtUserDetailsService.loadUserByUsername(x.getKey())))
+                    .map(x -> new MyPair<String, UserDetails>(x.getValue(), this.jwtUserDetailsService.loadUserByUsername(x.getKey())))
                     .filter(x -> jwtTokenUtil.validateToken(x.getKey(), x.getValue()))
                     .map(x -> {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
