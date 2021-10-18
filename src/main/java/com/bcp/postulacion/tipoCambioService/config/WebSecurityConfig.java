@@ -52,6 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                    .authorizeRequests().antMatchers("/h2-console/**").permitAll()
+                .and()
                     .authorizeRequests()
                         .antMatchers("/login")
                         .permitAll()
@@ -64,9 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 
-        httpSecurity.headers().frameOptions().disable()
-                .and()
-                    .authorizeRequests().antMatchers("/h2-console/**").permitAll();
+        httpSecurity.headers().frameOptions().disable();
 
     }
 }
