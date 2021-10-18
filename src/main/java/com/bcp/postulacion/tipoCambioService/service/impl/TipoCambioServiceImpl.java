@@ -36,7 +36,8 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
     public Maybe<TipoCambioDto> obtenerItem(String origen, String destino) {
         return obtenerItemById(origen, destino)
                 .map(Pair::getKey)
-                .map(this::assemblerToTipoCambioDto);
+                .map(this::assemblerToTipoCambioDto)
+                .switchIfEmpty(Maybe.error(new Exception("Recurso no encontrado")));
     }
 
     @Override

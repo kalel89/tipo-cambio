@@ -7,6 +7,7 @@ import com.bcp.postulacion.tipoCambioService.service.ITipoCambioService;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,19 +19,25 @@ public class TipoCambioController {
     @Autowired
     private ITipoCambioService service;
 
-    @GetMapping()
+    @GetMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Observable<TipoCambioDto> getList() {
         return service.listarTodosTiposCambio();
     }
 
-    @GetMapping("/{origen}/a/{destino}")
+    @GetMapping(value = "/{origen}/a/{destino}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Maybe<TipoCambioDto> getItem(
             @PathVariable("origen") String origen,
             @PathVariable("destino") String destino) {
         return service.obtenerItem(origen, destino);
     }
 
-    @PostMapping()
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Maybe<TipoCambioDto> guardar(@RequestBody(required = true) TipoCambioDto tipoCambioDto) {
         return service.guardar(
                 tipoCambioDto.getMonedaOrigen(),
@@ -38,7 +45,9 @@ public class TipoCambioController {
                 tipoCambioDto.getTipoCambio());
     }
 
-    @DeleteMapping()
+    @DeleteMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Maybe<TipoCambioDto> eliminar(@RequestBody(required = true) TipoCambioDto tipoCambioDto) {
         return service.eliminar(
                 tipoCambioDto.getMonedaOrigen(),
