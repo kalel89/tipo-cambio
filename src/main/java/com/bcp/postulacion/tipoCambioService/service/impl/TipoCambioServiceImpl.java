@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,6 +51,27 @@ public class TipoCambioServiceImpl implements ITipoCambioService {
                 .defaultIfEmpty(new TipoCambio(origen, destino, tipoCambio, LocalDateTime.now(), null))
                 .map(tipoCambioDao::save)
                 .map(this::assemblerToTipoCambioDto);
+    }
+
+    @Override
+    public Observable<TipoCambioDto> guardarMasivo(List<TipoCambioDto> lista) {
+        return Observable.fromIterable(lista)
+                .flatMap(x -> {
+                    final String origen = x.getMonedaOrigen();
+                    final String destino = x.getMonedaDestino();
+                    final BigDecimal tipoCambio = x.getTipoCambio();
+                    return obtenerItemById(origen, destino)
+                            .map(registroExistente -> {
+                                registroExistente.getKey().setTipoCambio(tipoCambio);
+                                registroExistente.getKey().setFechaActualizacion(LocalDateTime.now());
+                                return registroExistente;
+                            })
+                            .map(this::adaptarTipoCambioPorOrigenDeMoneda)
+                            .defaultIfEmpty(new TipoCambio(origen, destino, tipoCambio, LocalDateTime.now(), null))
+                            .map(tipoCambioDao::save)
+                            .map(this::assemblerToTipoCambioDto)
+                            .toObservable();
+                });
     }
 
     private TipoCambio adaptarTipoCambioPorOrigenDeMoneda(MyPair<TipoCambio, Boolean> pair) {

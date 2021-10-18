@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("tipo-cambio")
@@ -43,6 +44,13 @@ public class TipoCambioController {
                 tipoCambioDto.getMonedaOrigen(),
                 tipoCambioDto.getMonedaDestino(),
                 tipoCambioDto.getTipoCambio());
+    }
+
+    @PostMapping(value = "/masivo",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Observable<TipoCambioDto> guardarMasivo(@RequestBody(required = true) List<TipoCambioDto> tipoCambioDto) {
+        return service.guardarMasivo(tipoCambioDto);
     }
 
     @DeleteMapping(
